@@ -19,7 +19,7 @@ unsigned char program_bytes[5]= {
 
 unsigned long frequency= 1000000;
 
-unsigned data[1000];
+unsigned data[100];
 unsigned *data_pointer;
 const int num_data_points= sizeof(data)/sizeof(data[0]);
 
@@ -38,12 +38,13 @@ void setup()
   digitalWrite(RESET, 1);
   digitalWrite(RESET, 0);
 
+  Serial.begin(115200);
+
   generate_progamming_bytes();
   send_programming_bytes();
   send_programming_bytes();
 
   state= STATE_WAITING_FOR_COMMAND;
-  Serial.begin(115200);
 }
 
 void loop()
@@ -79,12 +80,10 @@ void loop()
     Serial.print(",");
     Serial.print(*data_pointer++);
     Serial.print("\r\n");
-    if (data_pointer - &data[0] > num_data_points)
+    if (data_pointer - &data[0] > num_data_points) {
       state= STATE_WAITING_FOR_COMMAND;
-    break;
-
-  default:
-    Serial.print("can't happen\r\n");
+      Serial.print("\r\n");
+    }
     break;
   }
 }
